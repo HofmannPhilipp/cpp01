@@ -6,7 +6,7 @@
 /*   By: phhofman <phhofman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 13:03:31 by phhofman          #+#    #+#             */
-/*   Updated: 2025/07/08 17:12:40 by phhofman         ###   ########.fr       */
+/*   Updated: 2025/07/09 11:07:09 by phhofman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,26 @@ bool isValidParameters(std::string filename, std::string s1, std::string s2)
 		return false;
 	}
 	return true;
+}
+
+void replace(std::ifstream infile, std::ofstream outfile, std::string s1, std::string s2)
+{
+	size_t size = s1.length();
+	std::string line(size, '\0');
+
+	while (infile.read(&line[0], size))
+	{
+		if (line == s1)
+		{
+			outfile.write(&s2[0], s2.length());
+			continue;
+		}
+		int pos = line.find(s1[0]);
+		if (pos == std::string::npos)
+			outfile.write(&line[0], size);
+		else
+			outfile.write(line.substr(0, pos), pos + 1); // pos + 1 ??
+	}
 }
 
 int main(int argc, char **argv)
@@ -63,11 +83,8 @@ int main(int argc, char **argv)
 		std::cerr << "Error: Could not open input file: " << filename << "\n";
 		return 1;
 	}
-	std::string line;
-	while (std::getline(infile, line))
-	{
-		line
-	}
+
+	replace(infile, outfile, s1, s2);
 	infile.close();
 	outfile.close();
 	return 0;
