@@ -6,7 +6,7 @@
 /*   By: phhofman <phhofman@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/07/07 13:03:31 by phhofman          #+#    #+#             */
-/*   Updated: 2025/07/09 11:07:09 by phhofman         ###   ########.fr       */
+/*   Updated: 2025/07/09 14:59:58 by phhofman         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 #include <fstream>
 #include <sstream>
 
-bool isValidParameters(std::string filename, std::string s1, std::string s2)
+bool isValidParameters(const std::string &filename, const std::string &s1, const std::string &s2)
 {
 	if (filename.empty())
 	{
@@ -35,23 +35,18 @@ bool isValidParameters(std::string filename, std::string s1, std::string s2)
 	return true;
 }
 
-void replace(std::ifstream infile, std::ofstream outfile, std::string s1, std::string s2)
+void replace(std::ifstream &infile, std::ofstream &outfile, const std::string &s1, const std::string &s2)
 {
-	size_t size = s1.length();
-	std::string line(size, '\0');
-
-	while (infile.read(&line[0], size))
+	std::string line;
+	while (std::getline(infile, line))
 	{
-		if (line == s1)
+		size_t pos = 0;
+		while ((pos = line.find(s1, pos)) != std::string::npos)
 		{
-			outfile.write(&s2[0], s2.length());
-			continue;
+			line = line.substr(0, pos) + s2 + line.substr(pos + s1.length());
+			pos += s2.length();
 		}
-		int pos = line.find(s1[0]);
-		if (pos == std::string::npos)
-			outfile.write(&line[0], size);
-		else
-			outfile.write(line.substr(0, pos), pos + 1); // pos + 1 ??
+		outfile << line << '\n';
 	}
 }
 
